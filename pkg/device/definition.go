@@ -6,7 +6,7 @@ package device
 import "C"
 import (
 	"fmt"
-	"pothosware/go-soapy-sdr/go-soapy-sdr/pkg/sdrerror"
+	"github.com/pothosware/go-soapy-sdr/pkg/sdrerror"
 )
 
 // Direction is the direction of the Data in the device TX and RX

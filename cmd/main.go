@@ -5,8 +5,8 @@ package main
 import "C"
 import (
 	"fmt"
+	"github.com/pothosware/go-soapy-sdr/pkg/device"
 	"log"
-	"pothosware/go-soapy-sdr/go-soapy-sdr/pkg/device"
 )
 
 func main() {

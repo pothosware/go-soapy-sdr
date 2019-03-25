@@ -8,7 +8,7 @@ package device
 // #include <SoapySDR/Formats.h>
 // #include <SoapySDR/Types.h>
 import "C"
-import "pothosware/go-soapy-sdr/go-soapy-sdr/pkg/sdrerror"
+import "github.com/pothosware/go-soapy-sdr/pkg/sdrerror"
 
 // HasDCOffsetMode returns if the device support automatic DC offset corrections
 //

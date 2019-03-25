@@ -9,7 +9,7 @@ package device
 // #include <SoapySDR/Types.h>
 import "C"
 import (
-	"pothosware/go-soapy-sdr/go-soapy-sdr/pkg/sdrerror"
+	"github.com/pothosware/go-soapy-sdr/pkg/sdrerror"
 	"unsafe"
 )
 

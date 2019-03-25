@@ -12,7 +12,7 @@ package device
 import "C"
 import (
 	"errors"
-	"pothosware/go-soapy-sdr/go-soapy-sdr/pkg/sdrerror"
+	"github.com/pothosware/go-soapy-sdr/pkg/sdrerror"
 	"unsafe"
 )
 
