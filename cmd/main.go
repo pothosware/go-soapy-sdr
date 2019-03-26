@@ -6,17 +6,21 @@ import "C"
 import (
 	"fmt"
 	"github.com/pothosware/go-soapy-sdr/pkg/device"
+	"github.com/pothosware/go-soapy-sdr/pkg/modules"
 	"github.com/pothosware/go-soapy-sdr/pkg/version"
 	"log"
 )
 
 func main() {
 
-	// Display the version
 	fmt.Printf("Soapy SDR\n")
-	fmt.Printf("ABI version: %v\n", version.GetABIVersion())
-	fmt.Printf("API version: %v\n", version.GetAPIVersion())
-	fmt.Printf("Lib version: %v\n", version.GetLibVersion())
+
+	displayVersionInformation()
+
+	displayModuleInformation()
+
+	fmt.Printf("Device Information\n")
+	fmt.Printf("------------------\n")
 
 	// List all devices
 	devices := device.Enumerate(nil)
@@ -89,6 +93,47 @@ func main() {
 	}
 
 	fmt.Printf("Done\n")
+}
+
+func displayVersionInformation() {
+
+	// Display the version
+	fmt.Printf("Version Information\n")
+	fmt.Printf("-------------------\n")
+	fmt.Printf("ABI version: %v\n", version.GetABIVersion())
+	fmt.Printf("API version: %v\n", version.GetAPIVersion())
+	fmt.Printf("Lib version: %v\n", version.GetLibVersion())
+}
+
+func displayModuleInformation() {
+
+	// Display the version
+	fmt.Printf("Module Information\n")
+	fmt.Printf("------------------\n")
+	fmt.Printf("Modules root path: %v\n", modules.GetRootPath())
+
+	searchPaths := modules.ListSearchPaths()
+	if len(searchPaths) > 0 {
+		for i, searchPath := range searchPaths {
+			loadErrors := modules.GetLoaderResult(searchPath)
+			fmt.Printf("Modules / Search path #%d: %v, load errors : %v\n", i, searchPath, loadErrors)
+		}
+	} else {
+		fmt.Printf("Module / Search paths: [none]\n")
+	}
+
+	modulesFound := modules.ListModules()
+	if len(modulesFound) > 0 {
+		for i, module := range modulesFound {
+			moduleVersion := modules.GetModuleVersion(module)
+			if len(moduleVersion) == 0 {
+				moduleVersion = "[None]"
+			}
+			fmt.Printf("Modules / Module #%d: %v, version: %v\n", i, module, moduleVersion)
+		}
+	} else {
+		fmt.Printf("Module / modules: [none]\n")
+	}
 }
 
 func displayDetails(dev *device.SDRDevice) {
