@@ -6,10 +6,17 @@ import "C"
 import (
 	"fmt"
 	"github.com/pothosware/go-soapy-sdr/pkg/device"
+	"github.com/pothosware/go-soapy-sdr/pkg/version"
 	"log"
 )
 
 func main() {
+
+	// Display the version
+	fmt.Printf("Soapy SDR\n")
+	fmt.Printf("ABI version: %v\n", version.GetABIVersion())
+	fmt.Printf("API version: %v\n", version.GetAPIVersion())
+	fmt.Printf("Lib version: %v\n", version.GetLibVersion())
 
 	// List all devices
 	devices := device.Enumerate(nil)
