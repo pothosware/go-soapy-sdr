@@ -21,9 +21,9 @@ func (dev *SDRDevice) ListGPIOBanks() []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listGPIOBanks(dev.device, &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // WriteGPIO writes the value of a GPIO bank.

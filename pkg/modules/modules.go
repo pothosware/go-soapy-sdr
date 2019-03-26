@@ -1,5 +1,5 @@
-// Utility functions to deal with modules. These utility functions are made available for advanced usage.
-// For most use cases, the API will automatically load modules.
+// Package modules groups all the utility functions to deal with modules. These utility functions are made available for
+// advanced usage. For most use cases, the API will automatically load modules.
 package modules
 
 // #cgo CFLAGS: -g -Wall

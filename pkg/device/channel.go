@@ -65,9 +65,9 @@ func (dev *SDRDevice) GetNumChannels(direction Direction) uint {
 func (dev *SDRDevice) GetChannelInfo(direction Direction, channel uint) map[string]string {
 
 	info := C.SoapySDRDevice_getChannelInfo(dev.device, C.int(direction), C.size_t(channel))
-	defer ArgsClear(info)
+	defer argsClear(info)
 
-	return Args2Go(info)
+	return args2Go(info)
 }
 
 // GetFullDuplex finds out if the specified channel is full or half duplex.

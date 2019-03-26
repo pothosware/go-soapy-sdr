@@ -45,13 +45,13 @@ func Enumerate(args map[string]string) []map[string]string {
 
 	length := C.size_t(0)
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
 	enumerateData := C.SoapySDRDevice_enumerate(cArgs, &length)
-	defer ArgsListClear(enumerateData, length)
+	defer argsListClear(enumerateData, length)
 
-	return ArgsList2Go(enumerateData, length)
+	return argsList2Go(enumerateData, length)
 }
 
 // EnumerateStrArgs returns a list of available devices on the system.
@@ -69,9 +69,9 @@ func EnumerateStrArgs(args string) []map[string]string {
 	defer C.free(unsafe.Pointer(cArgs))
 
 	enumerateData := C.SoapySDRDevice_enumerateStrArgs(cArgs, &length)
-	defer ArgsListClear(enumerateData, length)
+	defer argsListClear(enumerateData, length)
 
-	return ArgsList2Go(enumerateData, length)
+	return argsList2Go(enumerateData, length)
 }
 
 // Make makes a new Device object given device construction args.
@@ -85,8 +85,8 @@ func EnumerateStrArgs(args string) []map[string]string {
 // Return a pointer to a new Device object or null for error
 func Make(args map[string]string) (device *SDRDevice, err error) {
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
 	dev := C.SoapySDRDevice_make(cArgs)
 	if dev == nil {

@@ -25,9 +25,9 @@ func (dev *SDRDevice) ListAntennas(direction Direction, channel uint) []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listAntennas(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // SetAntennas sets the selected antenna on a chain.

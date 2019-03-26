@@ -21,9 +21,9 @@ func (dev *SDRDevice) ListUARTs() []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listUARTs(dev.device, &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // WriteUART writes data to a UART device.

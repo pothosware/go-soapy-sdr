@@ -38,7 +38,7 @@ func (dev *SDRDevice) GetHardwareKey() (hardwareKey string) {
 func (dev *SDRDevice) GetHardwareInfo() (hardwareInfo map[string]string) {
 
 	info := (C.SoapySDRKwargs)(C.SoapySDRDevice_getHardwareInfo(dev.device))
-	defer ArgsClear(info)
+	defer argsClear(info)
 
-	return Args2Go(info)
+	return args2Go(info)
 }

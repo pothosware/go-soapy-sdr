@@ -40,9 +40,9 @@ func (dev *SDRDevice) GetMasterClockRates() []SDRRange {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getMasterClockRates(dev.device, &length)
-	defer RangeArrayClear(info, length)
+	defer rangeArrayClear(info)
 
-	return RangeArray2Go(info, length)
+	return rangeArray2Go(info, length)
 }
 
 // ListClockSources gets the list of available clock sources.
@@ -53,9 +53,9 @@ func (dev *SDRDevice) ListClockSources() []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listClockSources(dev.device, &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // SetClockSource set the clock source on the device.

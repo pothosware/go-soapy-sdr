@@ -21,9 +21,9 @@ func (dev *SDRDevice) ListTimeSources() []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listTimeSources(dev.device, &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // SetTimeSource set the time source on the device.

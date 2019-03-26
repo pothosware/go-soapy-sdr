@@ -49,7 +49,7 @@ func (dev *SDRDevice) GetBandwidthRanges(direction Direction, channel uint) []SD
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getBandwidthRange(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer RangeArrayClear(info, length)
+	defer rangeArrayClear(info)
 
-	return RangeArray2Go(info, length)
+	return rangeArray2Go(info, length)
 }

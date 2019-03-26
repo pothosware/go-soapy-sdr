@@ -18,9 +18,9 @@ func (dev *SDRDevice) ListSensors() []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listSensors(dev.device, &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // GetSensorInfo gets meta-information about a sensor.
@@ -35,9 +35,9 @@ func (dev *SDRDevice) GetSensorInfo(key string) SDRArgInfo {
 	defer C.free(unsafe.Pointer(cKey))
 
 	info := C.SoapySDRDevice_getSensorInfo(dev.device, cKey)
-	defer ArgInfoClear(info)
+	defer argInfoClear(info)
 
-	return ArgInfo2Go(&info)
+	return argInfo2Go(&info)
 }
 
 // ReadSensor reads a global sensor given the name. The value returned is a string which can represent
@@ -70,9 +70,9 @@ func (dev *SDRDevice) ListChannelSensors(direction Direction, channel uint) []st
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listChannelSensors(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // GetChannelSensorInfo gets meta-information about a channel sensor.
@@ -89,9 +89,9 @@ func (dev *SDRDevice) GetChannelSensorInfo(direction Direction, channel uint, ke
 	defer C.free(unsafe.Pointer(cKey))
 
 	info := C.SoapySDRDevice_getChannelSensorInfo(dev.device, C.int(direction), C.size_t(channel), cKey)
-	defer ArgInfoClear(info)
+	defer argInfoClear(info)
 
-	return ArgInfo2Go(&info)
+	return argInfo2Go(&info)
 }
 
 // ReadChannelSensor reads a channel sensor given the name. The value returned is a string which can represent

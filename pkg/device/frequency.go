@@ -43,8 +43,8 @@ import (
 // Return an error or nil in case of success
 func (dev *SDRDevice) SetFrequency(direction Direction, channel uint, frequency float64, args map[string]string) (err sdrerror.SDRError) {
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
 	return sdrerror.Err(int(C.SoapySDRDevice_setFrequency(dev.device, C.int(direction), C.size_t(channel), C.double(frequency), cArgs)))
 }
@@ -71,8 +71,8 @@ func (dev *SDRDevice) SetFrequencyComponent(direction Direction, channel uint, n
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
 	return sdrerror.Err(int(C.SoapySDRDevice_setFrequencyComponent(dev.device, C.int(direction), C.size_t(channel), cName, C.double(frequency), cArgs)))
 }
@@ -121,9 +121,9 @@ func (dev *SDRDevice) ListFrequencies(direction Direction, channel uint) []strin
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listFrequencies(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // GetFrequencyRange gets the range of overall frequency values.
@@ -138,9 +138,9 @@ func (dev *SDRDevice) GetFrequencyRange(direction Direction, channel uint) []SDR
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getFrequencyRange(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer RangeArrayClear(info, length)
+	defer rangeArrayClear(info)
 
-	return RangeArray2Go(info, length)
+	return rangeArray2Go(info, length)
 }
 
 // GetFrequencyRangeComponent gets the range of tunable values for the specified element.
@@ -159,9 +159,9 @@ func (dev *SDRDevice) GetFrequencyRangeComponent(direction Direction, channel ui
 	defer C.free(unsafe.Pointer(cName))
 
 	info := C.SoapySDRDevice_getFrequencyRangeComponent(dev.device, C.int(direction), C.size_t(channel), cName, &length)
-	defer RangeArrayClear(info, length)
+	defer rangeArrayClear(info)
 
-	return RangeArray2Go(info, length)
+	return rangeArray2Go(info, length)
 }
 
 // GetFrequencyArgsInfo queries the argument info description for tune args.
@@ -176,7 +176,7 @@ func (dev *SDRDevice) GetFrequencyArgsInfo(direction Direction, channel uint) []
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getFrequencyArgsInfo(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer ArgInfoListClear(info, length)
+	defer argInfoListClear(info, length)
 
-	return ArgInfoList2Go(info, length)
+	return argInfoList2Go(info, length)
 }

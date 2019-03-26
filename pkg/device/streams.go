@@ -126,10 +126,10 @@ func (dev *SDRDevice) SetupSDRStreamCU8(direction Direction, channels []uint, ar
 	cFormat := C.CString("CU8")
 	defer C.free(unsafe.Pointer(cFormat))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
-	cChannels, cChannelsLength := Go2SizeTList(channels)
+	cChannels, cChannelsLength := go2SizeTList(channels)
 	defer C.free(unsafe.Pointer(cChannels))
 
 	val := C.SoapySDRDevice_setupStream(dev.device, C.int(direction), cFormat, cChannels, cChannelsLength, cArgs)
@@ -437,10 +437,10 @@ func (dev *SDRDevice) SetupSDRStreamCS8(direction Direction, channels []uint, ar
 	cFormat := C.CString("CS8")
 	defer C.free(unsafe.Pointer(cFormat))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
-	cChannels, cChannelsLength := Go2SizeTList(channels)
+	cChannels, cChannelsLength := go2SizeTList(channels)
 	defer C.free(unsafe.Pointer(cChannels))
 
 	val := C.SoapySDRDevice_setupStream(dev.device, C.int(direction), cFormat, cChannels, cChannelsLength, cArgs)
@@ -748,10 +748,10 @@ func (dev *SDRDevice) SetupSDRStreamCU16(direction Direction, channels []uint, a
 	cFormat := C.CString("CU16")
 	defer C.free(unsafe.Pointer(cFormat))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
-	cChannels, cChannelsLength := Go2SizeTList(channels)
+	cChannels, cChannelsLength := go2SizeTList(channels)
 	defer C.free(unsafe.Pointer(cChannels))
 
 	val := C.SoapySDRDevice_setupStream(dev.device, C.int(direction), cFormat, cChannels, cChannelsLength, cArgs)
@@ -1059,10 +1059,10 @@ func (dev *SDRDevice) SetupSDRStreamCS16(direction Direction, channels []uint, a
 	cFormat := C.CString("CS16")
 	defer C.free(unsafe.Pointer(cFormat))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
-	cChannels, cChannelsLength := Go2SizeTList(channels)
+	cChannels, cChannelsLength := go2SizeTList(channels)
 	defer C.free(unsafe.Pointer(cChannels))
 
 	val := C.SoapySDRDevice_setupStream(dev.device, C.int(direction), cFormat, cChannels, cChannelsLength, cArgs)
@@ -1370,10 +1370,10 @@ func (dev *SDRDevice) SetupSDRStreamCF32(direction Direction, channels []uint, a
 	cFormat := C.CString("CF32")
 	defer C.free(unsafe.Pointer(cFormat))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
-	cChannels, cChannelsLength := Go2SizeTList(channels)
+	cChannels, cChannelsLength := go2SizeTList(channels)
 	defer C.free(unsafe.Pointer(cChannels))
 
 	val := C.SoapySDRDevice_setupStream(dev.device, C.int(direction), cFormat, cChannels, cChannelsLength, cArgs)
@@ -1681,10 +1681,10 @@ func (dev *SDRDevice) SetupSDRStreamCF64(direction Direction, channels []uint, a
 	cFormat := C.CString("CF64")
 	defer C.free(unsafe.Pointer(cFormat))
 
-	cArgs, cArgsLength := Go2Args(args)
-	defer ArgsListClear(cArgs, cArgsLength)
+	cArgs, cArgsLength := go2Args(args)
+	defer argsListClear(cArgs, cArgsLength)
 
-	cChannels, cChannelsLength := Go2SizeTList(channels)
+	cChannels, cChannelsLength := go2SizeTList(channels)
 	defer C.free(unsafe.Pointer(cChannels))
 
 	val := C.SoapySDRDevice_setupStream(dev.device, C.int(direction), cFormat, cChannels, cChannelsLength, cArgs)

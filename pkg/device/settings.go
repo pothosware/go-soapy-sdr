@@ -21,9 +21,9 @@ func (dev *SDRDevice) GetSettingInfo() []SDRArgInfo {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getSettingInfo(dev.device, &length)
-	defer ArgInfoListClear(info, length)
+	defer argInfoListClear(info, length)
 
-	return ArgInfoList2Go(info, length)
+	return argInfoList2Go(info, length)
 }
 
 // WriteSetting writes an arbitrary setting on the device.
@@ -85,9 +85,9 @@ func (dev *SDRDevice) GetChannelSettingInfo(direction Direction, channel uint) [
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getChannelSettingInfo(dev.device, cDirection, cChannel, &length)
-	defer ArgInfoListClear(info, length)
+	defer argInfoListClear(info, length)
 
-	return ArgInfoList2Go(info, length)
+	return argInfoList2Go(info, length)
 }
 
 // WriteChannelSetting writes an arbitrary channel setting on the device.

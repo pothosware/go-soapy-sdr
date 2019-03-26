@@ -43,9 +43,9 @@ func (dev *SDRDevice) GetStreamFormats(direction Direction, channel uint) []stri
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getStreamFormats(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // GetNativeStreamFormat gets the hardware's native stream format for this channel.
@@ -79,9 +79,9 @@ func (dev *SDRDevice) GetStreamArgsInfo(direction Direction, channel uint) []SDR
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_getStreamArgsInfo(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer ArgInfoListClear(info, length)
+	defer argInfoListClear(info, length)
 
-	return ArgInfoList2Go(info, length)
+	return argInfoList2Go(info, length)
 }
 
 // ReadStreamStatus reads status information about a stream.
@@ -110,7 +110,7 @@ func readStreamStatus(stream SDRStream, chanMask []uint, flags []int, timeoutUs 
 	cFlags := (*C.int)(unsafe.Pointer(&flags[0]))
 
 	// Convert the requested chanMask to a list
-	channelMasks, _ := Go2SizeTList(chanMask)
+	channelMasks, _ := go2SizeTList(chanMask)
 	defer C.free(unsafe.Pointer(channelMasks))
 
 	cTimeNs := C.longlong(0)

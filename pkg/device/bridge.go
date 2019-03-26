@@ -16,8 +16,8 @@ import "unsafe"
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// StringArray2Go converts an array of C string to an array of Go String
-func StringArray2Go(strings **C.char, length C.size_t) []string {
+// stringArray2Go converts an array of C string to an array of Go String
+func stringArray2Go(strings **C.char, length C.size_t) []string {
 
 	results := make([]string, int(length))
 	var charPtrTemplate *C.char
@@ -31,8 +31,8 @@ func StringArray2Go(strings **C.char, length C.size_t) []string {
 	return results
 }
 
-// StringArrayClear frees an array of C strings
-func StringArrayClear(strings **C.char, length C.size_t) {
+// stringArrayClear frees an array of C strings
+func stringArrayClear(strings **C.char, length C.size_t) {
 
 	ptrStrings := &strings
 
@@ -45,8 +45,8 @@ func StringArrayClear(strings **C.char, length C.size_t) {
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// RangeArray2Go converts an array of C Range to an array of Go SDRRange
-func RangeArray2Go(ranges *C.SoapySDRRange, length C.size_t) []SDRRange {
+// rangeArray2Go converts an array of C Range to an array of Go SDRRange
+func rangeArray2Go(ranges *C.SoapySDRRange, length C.size_t) []SDRRange {
 
 	results := make([]SDRRange, int(length))
 
@@ -65,8 +65,8 @@ func RangeArray2Go(ranges *C.SoapySDRRange, length C.size_t) []SDRRange {
 	return results
 }
 
-// RangeArrayClear frees an array of C Range
-func RangeArrayClear(ranges *C.SoapySDRRange, length C.size_t) {
+// rangeArrayClear frees an array of C Range
+func rangeArrayClear(ranges *C.SoapySDRRange) {
 
 	// Free the array
 	C.free(unsafe.Pointer(ranges))
@@ -78,8 +78,8 @@ func RangeArrayClear(ranges *C.SoapySDRRange, length C.size_t) {
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// ArgInfo2Go converts the type of a C ArgInfo to Go type
-func ArgInfo2Go(argInfo *C.SoapySDRArgInfo) SDRArgInfo {
+// argInfo2Go converts the type of a C ArgInfo to Go type
+func argInfo2Go(argInfo *C.SoapySDRArgInfo) SDRArgInfo {
 
 	var argType SDRArgInfoType
 	switch argInfo._type {
@@ -106,13 +106,13 @@ func ArgInfo2Go(argInfo *C.SoapySDRArgInfo) SDRArgInfo {
 			Step:    float64(argInfo._range.step),
 		},
 		NumOptions:  int(argInfo.numOptions),
-		Options:     StringArray2Go(argInfo.options, argInfo.numOptions),
-		OptionNames: StringArray2Go(argInfo.optionNames, argInfo.numOptions),
+		Options:     stringArray2Go(argInfo.options, argInfo.numOptions),
+		OptionNames: stringArray2Go(argInfo.optionNames, argInfo.numOptions),
 	}
 }
 
-// ArgInfoClear frees a single C ArgInfo
-func ArgInfoClear(argInfo C.SoapySDRArgInfo) {
+// argInfoClear frees a single C ArgInfo
+func argInfoClear(argInfo C.SoapySDRArgInfo) {
 
 	// SoapySDRArgInfo_clear take a pointer, but does not free the object itself, only its content.
 	// So it is safe to use for freeing a stack allocated object
@@ -125,8 +125,8 @@ func ArgInfoClear(argInfo C.SoapySDRArgInfo) {
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// ArgInfoList2Go converts an array of C ArgInfo to an array of Go SDRArgInfo
-func ArgInfoList2Go(argInfos *C.SoapySDRArgInfo, length C.size_t) []SDRArgInfo {
+// argInfoList2Go converts an array of C ArgInfo to an array of Go SDRArgInfo
+func argInfoList2Go(argInfos *C.SoapySDRArgInfo, length C.size_t) []SDRArgInfo {
 
 	results := make([]SDRArgInfo, int(length))
 	var argInfoTemplate C.SoapySDRArgInfo
@@ -134,14 +134,14 @@ func ArgInfoList2Go(argInfos *C.SoapySDRArgInfo, length C.size_t) []SDRArgInfo {
 	// Read all the arg infos
 	for i := 0; i < int(length); i++ {
 		val := (*C.SoapySDRArgInfo)(unsafe.Pointer(uintptr(unsafe.Pointer(argInfos)) + uintptr(i)*unsafe.Sizeof(argInfoTemplate)))
-		results[i] = ArgInfo2Go(val)
+		results[i] = argInfo2Go(val)
 	}
 
 	return results
 }
 
-// ArgInfoListClear frees a list of C ArgInfo
-func ArgInfoListClear(args *C.SoapySDRArgInfo, length C.size_t) {
+// argInfoListClear frees a list of C ArgInfo
+func argInfoListClear(args *C.SoapySDRArgInfo, length C.size_t) {
 	if args != nil && int(length) > 0 {
 		C.SoapySDRArgInfoList_clear(args, length)
 	}
@@ -153,8 +153,8 @@ func ArgInfoListClear(args *C.SoapySDRArgInfo, length C.size_t) {
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// Args2Go converts a single C Args to Go Arg
-func Args2Go(args C.SoapySDRKwargs) map[string]string {
+// args2Go converts a single C Args to Go Arg
+func args2Go(args C.SoapySDRKwargs) map[string]string {
 
 	results := make(map[string]string, args.size)
 
@@ -172,16 +172,16 @@ func Args2Go(args C.SoapySDRKwargs) map[string]string {
 
 }
 
-// ArgsClear frees a single C Args
-func ArgsClear(args C.SoapySDRKwargs) {
+// argsClear frees a single C Args
+func argsClear(args C.SoapySDRKwargs) {
 
 	// SoapySDRKwargs_clear take a pointer, but does not free the object itself, only its content.
 	// So it is safe to use for freeing a stack allocated object
 	C.SoapySDRKwargs_clear(&args)
 }
 
-// Go2Args converts a single Go args to a C Args
-func Go2Args(args map[string]string) (*C.SoapySDRKwargs, C.size_t) {
+// go2Args converts a single Go args to a C Args
+func go2Args(args map[string]string) (*C.SoapySDRKwargs, C.size_t) {
 
 	if len(args) == 0 {
 		return nil, C.size_t(0)
@@ -221,8 +221,8 @@ func Go2Args(args map[string]string) (*C.SoapySDRKwargs, C.size_t) {
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// ArgsList2Go converts a list of C Args to a lis of Go Arg
-func ArgsList2Go(args *C.SoapySDRKwargs, length C.size_t) []map[string]string {
+// argsList2Go converts a list of C Args to a lis of Go Arg
+func argsList2Go(args *C.SoapySDRKwargs, length C.size_t) []map[string]string {
 
 	results := make([]map[string]string, 0, length)
 
@@ -255,56 +255,11 @@ func ArgsList2Go(args *C.SoapySDRKwargs, length C.size_t) []map[string]string {
 	return results
 }
 
-// ArgsListClear frees a list of C Args
-func ArgsListClear(args *C.SoapySDRKwargs, length C.size_t) {
+// argsListClear frees a list of C Args
+func argsListClear(args *C.SoapySDRKwargs, length C.size_t) {
 	if args != nil && int(length) > 0 {
 		C.SoapySDRKwargsList_clear(args, length)
 	}
-}
-
-// Go2ArgsList converts a list of Go args to a list of C Args
-func Go2ArgsList(argsList []map[string]string) (*C.SoapySDRKwargs, C.size_t) {
-
-	if len(argsList) == 0 {
-		return nil, C.size_t(0)
-	}
-
-	// Temporary variable for being able to use `unsafe.Sizeof`
-	var argsTemplate C.SoapySDRKwargs
-	var charPtrTemplate *C.char
-
-	// Allocate the result with malloc because it could be freed by `SoapySDRKwargs_clear`
-	result := (*C.SoapySDRKwargs)(C.malloc(C.size_t(len(argsList) * int(unsafe.Sizeof(argsTemplate)))))
-
-	for argsIdx := 0; argsIdx < len(argsList); argsIdx++ {
-
-		// Get the args themselves and a pointer to their related C struct
-		args := argsList[argsIdx]
-		currentArgs := (*C.SoapySDRKwargs)(unsafe.Pointer(uintptr(unsafe.Pointer(result)) + uintptr(argsIdx)*unsafe.Sizeof(argsTemplate)))
-
-		// Allocate the lists of strings for the arguments
-		keys := (**C.char)(C.malloc(C.size_t(len(args) * int(unsafe.Sizeof(charPtrTemplate)))))
-		vals := (**C.char)(C.malloc(C.size_t(len(args) * int(unsafe.Sizeof(charPtrTemplate)))))
-
-		idx := 0
-		for k, v := range args {
-
-			key := (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(keys)) + uintptr(idx)*unsafe.Sizeof(*keys)))
-			val := (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(vals)) + uintptr(idx)*unsafe.Sizeof(*vals)))
-
-			*key = C.CString(k)
-			*val = C.CString(v)
-
-			idx++
-		}
-
-		currentArgs.size = C.size_t(len(args))
-		currentArgs.keys = keys
-		currentArgs.vals = vals
-
-	}
-
-	return result, C.size_t(len(argsList))
 }
 
 /* ******************************************************************************* */
@@ -313,18 +268,18 @@ func Go2ArgsList(argsList []map[string]string) (*C.SoapySDRKwargs, C.size_t) {
 /*                                                                                 */
 /* ******************************************************************************* */
 
-// Go2SizeTList converts a list of Go uint to a list of C size_t
-func Go2SizeTList(integers []uint) (*C.size_t, C.size_t) {
+// go2SizeTList converts a list of Go uint to a list of C size_t
+func go2SizeTList(integers []uint) (*C.size_t, C.size_t) {
 
 	if len(integers) == 0 {
 		return nil, C.size_t(0)
 	}
 
-	var sizeTTemplate C.size_t
-	results := (*C.size_t)(C.malloc(C.size_t(len(integers) * int(unsafe.Sizeof(sizeTTemplate)))))
+	var sizeTemplate C.size_t
+	results := (*C.size_t)(C.malloc(C.size_t(len(integers) * int(unsafe.Sizeof(sizeTemplate)))))
 
 	for i, v := range integers {
-		val := (*C.size_t)(unsafe.Pointer(uintptr(unsafe.Pointer(results)) + uintptr(i)*unsafe.Sizeof(sizeTTemplate)))
+		val := (*C.size_t)(unsafe.Pointer(uintptr(unsafe.Pointer(results)) + uintptr(i)*unsafe.Sizeof(sizeTemplate)))
 		*val = C.size_t(v)
 	}
 

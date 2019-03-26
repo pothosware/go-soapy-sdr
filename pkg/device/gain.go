@@ -27,9 +27,9 @@ func (dev *SDRDevice) ListGains(direction Direction, channel uint) []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listGains(dev.device, C.int(direction), C.size_t(channel), &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // HasGainMode returns if the device support automatic gain control

@@ -21,9 +21,9 @@ func (dev *SDRDevice) ListRegisterInterfaces() []string {
 	length := C.size_t(0)
 
 	info := C.SoapySDRDevice_listRegisterInterfaces(dev.device, &length)
-	defer StringArrayClear(info, length)
+	defer stringArrayClear(info, length)
 
-	return StringArray2Go(info, length)
+	return stringArray2Go(info, length)
 }
 
 // WriteRegister writes a register on the device given the interface name. This can represent a register on a soft CPU,
