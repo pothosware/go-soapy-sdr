@@ -30,6 +30,7 @@ func main() {
 
 	if len(devices) == 0 {
 		fmt.Printf("No device found!!\n")
+		return
 	}
 
 	// Take the first device
