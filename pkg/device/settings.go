@@ -66,7 +66,6 @@ func (dev *SDRDevice) ReadSetting(key string) string {
 	defer C.free(unsafe.Pointer(cKey))
 
 	val := (*C.char)(C.SoapySDRDevice_readSetting(dev.device, cKey))
-	// TODO check if it should be un allocated
 	defer C.free(unsafe.Pointer(val))
 
 	return C.GoString(val)
@@ -135,7 +134,6 @@ func (dev *SDRDevice) ReadChannelSetting(direction Direction, channel uint, key 
 	defer C.free(unsafe.Pointer(cKey))
 
 	val := (*C.char)(C.SoapySDRDevice_readChannelSetting(dev.device, cDirection, cChannel, cKey))
-	// TODO check if it should be un allocated
 	defer C.free(unsafe.Pointer(val))
 
 	return C.GoString(val)

@@ -35,6 +35,7 @@ func (dev *SDRDevice) GetSensorInfo(key string) SDRArgInfo {
 	defer C.free(unsafe.Pointer(cKey))
 
 	info := C.SoapySDRDevice_getSensorInfo(dev.device, cKey)
+	defer ArgInfoClear(info)
 
 	return ArgInfo2Go(&info)
 }
@@ -88,6 +89,7 @@ func (dev *SDRDevice) GetChannelSensorInfo(direction Direction, channel uint, ke
 	defer C.free(unsafe.Pointer(cKey))
 
 	info := C.SoapySDRDevice_getChannelSensorInfo(dev.device, C.int(direction), C.size_t(channel), cKey)
+	defer ArgInfoClear(info)
 
 	return ArgInfo2Go(&info)
 }

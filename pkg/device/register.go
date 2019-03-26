@@ -101,6 +101,7 @@ func (dev *SDRDevice) ReadRegisters(name string, addr uint32, length uint) []uin
 	cLength := C.size_t(length)
 
 	cValue := C.SoapySDRDevice_readRegisters(dev.device, cName, cAddr, &cLength)
+	defer C.free(unsafe.Pointer(cValue))
 
 	var uintTemplate *C.uint
 

@@ -45,8 +45,8 @@ func (dev *SDRDevice) ReadI2C(addr int32, numBytes uint) (data []uint8) {
 	cAddr := C.int(addr)
 	cNumBytes := C.size_t(len(data))
 
-	// TODO check if need free
 	cData := C.SoapySDRDevice_readI2C(dev.device, cAddr, &cNumBytes)
+	defer C.free(unsafe.Pointer(cData))
 
 	data = make([]uint8, int(cNumBytes))
 

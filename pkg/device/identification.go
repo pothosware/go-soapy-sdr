@@ -7,13 +7,17 @@ package device
 // #include <SoapySDR/Device.h>
 // #include <SoapySDR/Types.h>
 import "C"
+import "unsafe"
 
 // GetDriverKey returns a key that uniquely identifies the device driver.
 //
 // This key identifies the underlying implementation. Several variants of a product may share a driver.
 func (dev *SDRDevice) GetDriverKey() (driverKey string) {
 
-	return C.GoString(C.SoapySDRDevice_getDriverKey(dev.device))
+	val := (*C.char)(C.SoapySDRDevice_getDriverKey(dev.device))
+	defer C.free(unsafe.Pointer(val))
+
+	return C.GoString(val)
 }
 
 // GetHardwareKey returns a key that uniquely identifies the hardware.
@@ -21,7 +25,10 @@ func (dev *SDRDevice) GetDriverKey() (driverKey string) {
 // This key should be meaningful to the user to optimize for the underlying hardware.
 func (dev *SDRDevice) GetHardwareKey() (hardwareKey string) {
 
-	return C.GoString(C.SoapySDRDevice_getHardwareKey(dev.device))
+	val := (*C.char)(C.SoapySDRDevice_getHardwareKey(dev.device))
+	defer C.free(unsafe.Pointer(val))
+
+	return C.GoString(val)
 }
 
 // GetHardwareInfo queries a dictionary of available device information.
