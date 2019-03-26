@@ -1,3 +1,4 @@
+// Package modules groups utility functions to query version information.
 package version
 
 // #cgo CFLAGS: -g -Wall
