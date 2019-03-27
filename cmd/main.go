@@ -7,13 +7,16 @@ import (
 	"fmt"
 	"github.com/pothosware/go-soapy-sdr/pkg/device"
 	"github.com/pothosware/go-soapy-sdr/pkg/modules"
+	"github.com/pothosware/go-soapy-sdr/pkg/sdrlogger"
 	"github.com/pothosware/go-soapy-sdr/pkg/version"
 	"log"
 )
 
 func main() {
 
-	fmt.Printf("Soapy SDR\n")
+	sdrlogger.RegisterLogHandler(logSoapy)
+	sdrlogger.Log(sdrlogger.Info, "Soapy SDR\n")
+	sdrlogger.Logf(sdrlogger.Info, "%v\n", "Demonstration")
 
 	displayVersionInformation()
 
@@ -437,4 +440,32 @@ func displayDirectionChannelDetails(dev *device.SDRDevice, direction device.Dire
 	} else {
 		fmt.Printf("Channel #%d / Sensors: [none]\n", channel)
 	}
+}
+
+// logSoapy is a function that is used to receive Soapy messages to be logged
+func logSoapy(level sdrlogger.SDRLogLevel, message string) {
+
+	levelStr := "Unknown"
+	switch level {
+	case sdrlogger.Fatal:
+		levelStr = "Fatal"
+	case sdrlogger.Critical:
+		levelStr = "Critical"
+	case sdrlogger.Error:
+		levelStr = "Error"
+	case sdrlogger.Warning:
+		levelStr = "Warning"
+	case sdrlogger.Notice:
+		levelStr = "Notice"
+	case sdrlogger.Info:
+		levelStr = "Info"
+	case sdrlogger.Debug:
+		levelStr = "Debug"
+	case sdrlogger.Trace:
+		levelStr = "Trace"
+	case sdrlogger.SSI:
+		levelStr = "SSI"
+	}
+
+	fmt.Printf("Soapy Logged: [%v] %v\n", levelStr, message)
 }
