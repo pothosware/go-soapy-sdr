@@ -270,11 +270,9 @@ func go2ArgsList(argsList []map[string]string) (*C.SoapySDRKwargs, C.size_t) {
 	}
 
 	var result *C.SoapySDRKwargs
-	size := unsafe.Sizeof(*result)
 
 	// Allocate the result with malloc because it could be freed by `SoapySDRKwargsList_clear`
-	result = (*C.SoapySDRKwargs)(C.malloc(C.size_t(size)))
-	result.size = C.size_t(len(argsList))
+	result = (*C.SoapySDRKwargs)(C.malloc(C.size_t(len(argsList) * int(unsafe.Sizeof(*result)))))
 
 	for i, args := range argsList {
 
@@ -308,7 +306,7 @@ func go2ArgsList(argsList []map[string]string) (*C.SoapySDRKwargs, C.size_t) {
 
 /* ******************************************************************************* */
 /*                                                                                 */
-/*                                SOAPY DEVICES                                     */
+/*                                SOAPY DEVICES                                    */
 /*                                                                                 */
 /* ******************************************************************************* */
 
