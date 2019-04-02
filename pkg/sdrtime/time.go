@@ -18,7 +18,7 @@ func TicksToTimeNs(ticks int, rate float64) int {
 	return int(C.SoapySDR_ticksToTimeNs(C.longlong(ticks), C.double(rate)))
 }
 
-// TicksToTimeNs converts a time in nanoseconds into a tick count using the tick rate.
+// TimeNsToTicks converts a time in nanoseconds into a tick count using the tick rate.
 //
 // Params:
 //  - timeNs: time in nanoseconds

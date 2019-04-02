@@ -20,7 +20,7 @@ import (
 	"unsafe"
 )
 
-// The available priority levels for log messages.
+// SDRLogLevel is the priority level for log messages.
 //
 // The default log level threshold is Info. Log messages with lower priorities are dropped.
 //
@@ -49,7 +49,7 @@ const (
 	SSI SDRLogLevel = 9
 )
 
-// Send a message to the registered logger.
+// Log sends a message to the registered logger.
 //
 // Params:
 //  - logLevel: a possible logging level
@@ -64,7 +64,7 @@ func Log(level SDRLogLevel, message string) {
 	C.SoapySDR_log(cLevel, cMessage)
 }
 
-// Send a message to the registered logger.
+// Logf sends a message to the registered logger.
 //
 // Params:
 //  - logLevel: a possible logging level
