@@ -144,51 +144,16 @@ func (dev *SDRDevice) Unmake() (err sdrerror.SDRError) {
 // Return a list of device pointers per each specified argument
 func MakeList(argsList []map[string]string) (devices []*SDRDevice, err error) {
 
-	type opened struct {
-		id     int
-		device *SDRDevice
-		err    error
+	cArgs, cLength := go2ArgsList(argsList)
+	defer argsListClear(cArgs, cLength)
+
+	dev := C.SoapySDRDevice_make_list(cArgs, cLength)
+	if dev == nil {
+		return nil, errors.New(LastError())
 	}
+	defer devicesClear(dev)
 
-	messages := make(chan opened)
-	defer close(messages)
-
-	// Open all devices in parallel
-	for i, args := range argsList {
-		go func(id int, args map[string]string) {
-			dev, err := Make(args)
-			messages <- opened{id: id, device: dev, err: err}
-		}(i, args)
-	}
-
-	devices = make([]*SDRDevice, len(argsList))
-
-	// Receive the results
-	for i := 0; i < len(argsList); i++ {
-		result := <-messages
-		if result.err != nil {
-			// In case of an error, keep the error
-			err = result.err
-		} else {
-			// Otherwise, keep the result
-			devices[result.id] = result.device
-		}
-	}
-
-	// In case of error, close all devices opened
-	if err != nil {
-		for _, dev := range devices {
-			if dev != nil {
-				// Ignore the error as in any case situation is already bad...
-				if errUnmake := dev.Unmake(); errUnmake != nil {
-					err = errUnmake
-				}
-			}
-		}
-		return nil, err
-	}
-
-	return devices, nil
+	return devices2Go(dev, cLength), nil
 }
 
 // UnmakeList unmakes or releases a list of device handles.
@@ -202,28 +167,8 @@ func MakeList(argsList []map[string]string) (devices []*SDRDevice, err error) {
 // Return an error or nil in case of success
 func UnmakeList(devices []*SDRDevice) (err sdrerror.SDRError) {
 
-	type closed struct {
-		err sdrerror.SDRError
-	}
+	cDevices, cLength := go2Devices(devices)
+	defer devicesClear(cDevices)
 
-	messages := make(chan closed)
-	defer close(messages)
-
-	// Close all devices in parallel
-	for _, dev := range devices {
-		go func(dev *SDRDevice) {
-			err := dev.Unmake()
-			messages <- closed{err: err}
-		}(dev)
-	}
-
-	// Receive all the results of close operations
-	for i := 0; i < len(devices); i++ {
-		result := <-messages
-		if result.err != nil {
-			err = result.err
-		}
-	}
-
-	return err
+	return sdrerror.Err(int(C.SoapySDRDevice_unmake_list(cDevices, cLength)))
 }

@@ -262,6 +262,97 @@ func argsListClear(args *C.SoapySDRKwargs, length C.size_t) {
 	}
 }
 
+// go2ArgsList converts a slice of Go args to an array C Args
+func go2ArgsList(argsList []map[string]string) (*C.SoapySDRKwargs, C.size_t) {
+
+	if len(argsList) == 0 {
+		return nil, C.size_t(0)
+	}
+
+	var result *C.SoapySDRKwargs
+	size := unsafe.Sizeof(*result)
+
+	// Allocate the result with malloc because it could be freed by `SoapySDRKwargsList_clear`
+	result = (*C.SoapySDRKwargs)(C.malloc(C.size_t(size)))
+	result.size = C.size_t(len(argsList))
+
+	for i, args := range argsList {
+
+		var charPtrTemplate *C.char
+		keys := (**C.char)(C.malloc(C.size_t(len(args) * int(unsafe.Sizeof(charPtrTemplate)))))
+		vals := (**C.char)(C.malloc(C.size_t(len(args) * int(unsafe.Sizeof(charPtrTemplate)))))
+
+		idx := 0
+		for k, v := range args {
+
+			key := (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(keys)) + uintptr(idx)*unsafe.Sizeof(*keys)))
+			val := (**C.char)(unsafe.Pointer(uintptr(unsafe.Pointer(vals)) + uintptr(idx)*unsafe.Sizeof(*vals)))
+
+			*key = C.CString(k)
+			*val = C.CString(v)
+
+			idx++
+		}
+
+		// Get the current argument
+		currentArgs := (*C.SoapySDRKwargs)(unsafe.Pointer(uintptr(unsafe.Pointer(result)) + uintptr(i)*unsafe.Sizeof(*result)))
+
+		// Set its values
+		currentArgs.keys = keys
+		currentArgs.vals = vals
+		currentArgs.size = C.size_t(len(args))
+	}
+
+	return result, C.size_t(len(argsList))
+}
+
+/* ******************************************************************************* */
+/*                                                                                 */
+/*                                SOAPY DEVICES                                     */
+/*                                                                                 */
+/* ******************************************************************************* */
+
+// devices2Go converts an array of devices to a slice of devices
+func devices2Go(argsList **C.SoapySDRDevice, length C.size_t) []*SDRDevice {
+
+	results := make([]*SDRDevice, int(length))
+
+	// Read all the strings
+	for i := 0; i < int(length); i++ {
+		device := (**C.SoapySDRDevice)(unsafe.Pointer(uintptr(unsafe.Pointer(argsList)) + uintptr(i)*unsafe.Sizeof(*argsList)))
+		results[i] = &SDRDevice{
+			device: *device,
+		}
+	}
+
+	return results
+}
+
+// devicesClear frees an array of devices
+func devicesClear(devices **C.SoapySDRDevice) {
+
+	// Free the array
+	C.free(unsafe.Pointer(devices))
+}
+
+// go2Devices converts a slice of SDRDevices to a C list of devices
+func go2Devices(devices []*SDRDevice) (**C.SoapySDRDevice, C.size_t) {
+
+	if len(devices) == 0 {
+		return nil, C.size_t(0)
+	}
+
+	var devicePtrTemplate *C.SoapySDRDevice
+	cDevices := (**C.SoapySDRDevice)(C.malloc(C.size_t(len(devices) * int(unsafe.Sizeof(devicePtrTemplate)))))
+
+	for i, device := range devices {
+		devicePtr := (**C.SoapySDRDevice)(unsafe.Pointer(uintptr(unsafe.Pointer(cDevices)) + uintptr(i)*unsafe.Sizeof(devicePtrTemplate)))
+		*devicePtr = (*device).device
+	}
+
+	return cDevices, C.size_t(len(devices))
+}
+
 /* ******************************************************************************* */
 /*                                                                                 */
 /*                             OTHER FUNCTIONS                                     */
