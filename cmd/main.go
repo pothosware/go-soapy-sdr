@@ -22,9 +22,6 @@ func main() {
 
 	displayModuleInformation()
 
-	fmt.Printf("Device Information\n")
-	fmt.Printf("------------------\n")
-
 	// List all devices
 	devices := device.Enumerate(nil)
 	for i, dev := range devices {
@@ -40,57 +37,36 @@ func main() {
 		return
 	}
 
-	// Take the first device
-	args := map[string]string{
-		"driver": devices[0]["driver"],
+	// Convert the device information to arguments for opening all detected devices
+	deviceArgs := make([]map[string]string, len(devices))
+	for i, dev := range devices {
+		deviceArgs[i] = map[string]string{
+			"driver": dev["driver"],
+		}
 	}
 
-	dev, err := device.Make(args)
+	// Open all devices in once
+	devs, err := device.MakeList(deviceArgs)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	// Display information about the device
-	displayDetails(dev)
+	for i, dev := range devs {
 
-	// Apply settings
-	if err := dev.SetSampleRate(device.DirectionRX, 0, 1e6); err != nil {
-		log.Fatal(fmt.Printf("setSampleRate fail: error: %v\n", err))
-	}
-	if err := dev.SetFrequency(device.DirectionRX, 0, 912.3e6, nil); err != nil {
-		log.Fatal(fmt.Printf("setFrequency fail: error: %v\n", err))
-	}
+		fmt.Printf("*******************\n")
+		fmt.Printf("Device: %v\n", devices[i]["driver"])
+		fmt.Printf("*******************\n")
 
-	stream, err := dev.SetupSDRStreamCS8(device.DirectionRX, []uint{0}, nil)
-	if err != nil {
-		log.Fatal(fmt.Printf("SetupStream fail: error: %v\n", err))
+		// Display information about the device
+		displayDetails(dev)
+
+		// Receive some data
+		receiveSomeData(dev)
+
 	}
 
-	if err := stream.Activate(0, 0, 0); err != nil {
-		log.Fatal(fmt.Printf("Activate fail: error: %v\n", err))
-	}
-
-	fmt.Printf("Stream MTU: %v\n", stream.GetMTU())
-	fmt.Printf("NumDirectAccessBuffers: %v\n", stream.GetNumDirectAccessBuffers())
-
-	buffers := make([][]int8, 1)
-	buffers[0] = make([]int8, 1024)
-	flags := make([]int, 1)
-
-	for i := 0; i < 10; i++ {
-		timeNs, numElemsRead, err := stream.Read(buffers, 511, flags, 100000)
-		fmt.Printf("flags=%v, numElemsRead=%v, timeNs=%v, err=%v\n", flags, numElemsRead, timeNs, err)
-	}
-
-	if err := stream.Deactivate(0, 0); err != nil {
-		log.Fatal(fmt.Printf("Deactivate fail: error: %v\n", err))
-	}
-
-	if err := stream.Close(); err != nil {
-		log.Fatal(fmt.Printf("Close fail: error: %v\n", err))
-	}
-
-	err = dev.Unmake()
+	// Close all devices
+	err = device.UnmakeList(devs)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -101,6 +77,7 @@ func main() {
 func displayVersionInformation() {
 
 	// Display the version
+	fmt.Printf("-------------------\n")
 	fmt.Printf("Version Information\n")
 	fmt.Printf("-------------------\n")
 	fmt.Printf("ABI version: %v\n", version.GetABIVersion())
@@ -111,8 +88,10 @@ func displayVersionInformation() {
 func displayModuleInformation() {
 
 	// Display the version
+	fmt.Printf("------------------\n")
 	fmt.Printf("Module Information\n")
 	fmt.Printf("------------------\n")
+
 	fmt.Printf("Modules root path: %v\n", modules.GetRootPath())
 
 	searchPaths := modules.ListSearchPaths()
@@ -139,7 +118,12 @@ func displayModuleInformation() {
 	}
 }
 
+// displayDetails displays the details and information of a device (for all its direction and channels)
 func displayDetails(dev *device.SDRDevice) {
+
+	fmt.Printf("-------------------\n")
+	fmt.Printf("Device Information\n")
+	fmt.Printf("-------------------\n")
 
 	// Function from identification API
 	fmt.Printf("Identification / DriverKey: %v\n", dev.GetDriverKey())
@@ -256,6 +240,7 @@ func displayDetails(dev *device.SDRDevice) {
 	displayDirectionDetails(dev, device.DirectionRX)
 }
 
+// displayDirectionDetails displays the details and information of a device/direction (for all its channels)
 func displayDirectionDetails(dev *device.SDRDevice, direction device.Direction) {
 
 	if direction == device.DirectionTX {
@@ -279,6 +264,7 @@ func displayDirectionDetails(dev *device.SDRDevice, direction device.Direction) 
 	}
 }
 
+// displayDirectionChannelDetails displays the details and information of a device/direction/channel
 func displayDirectionChannelDetails(dev *device.SDRDevice, direction device.Direction, channel uint) {
 
 	// Settings
@@ -439,6 +425,51 @@ func displayDirectionChannelDetails(dev *device.SDRDevice, direction device.Dire
 		}
 	} else {
 		fmt.Printf("Channel #%d / Sensors: [none]\n", channel)
+	}
+}
+
+// displayDetails displays the details and information of a device (for all its direction and channels)
+func receiveSomeData(dev *device.SDRDevice) {
+
+	fmt.Printf("-------------------\n")
+	fmt.Printf("Data Reception\n")
+	fmt.Printf("-------------------\n")
+
+	// Apply settings
+	if err := dev.SetSampleRate(device.DirectionRX, 0, 1e6); err != nil {
+		log.Fatal(fmt.Printf("setSampleRate fail: error: %v\n", err))
+	}
+	if err := dev.SetFrequency(device.DirectionRX, 0, 912.3e6, nil); err != nil {
+		log.Fatal(fmt.Printf("setFrequency fail: error: %v\n", err))
+	}
+
+	stream, err := dev.SetupSDRStreamCS8(device.DirectionRX, []uint{0}, nil)
+	if err != nil {
+		log.Fatal(fmt.Printf("SetupStream fail: error: %v\n", err))
+	}
+
+	if err := stream.Activate(0, 0, 0); err != nil {
+		log.Fatal(fmt.Printf("Activate fail: error: %v\n", err))
+	}
+
+	fmt.Printf("Stream MTU: %v\n", stream.GetMTU())
+	fmt.Printf("NumDirectAccessBuffers: %v\n", stream.GetNumDirectAccessBuffers())
+
+	buffers := make([][]int8, 1)
+	buffers[0] = make([]int8, 1024)
+	flags := make([]int, 1)
+
+	for i := 0; i < 10; i++ {
+		timeNs, numElemsRead, err := stream.Read(buffers, 511, flags, 100000)
+		fmt.Printf("flags=%v, numElemsRead=%v, timeNs=%v, err=%v\n", flags, numElemsRead, timeNs, err)
+	}
+
+	if err := stream.Deactivate(0, 0); err != nil {
+		log.Fatal(fmt.Printf("Deactivate fail: error: %v\n", err))
+	}
+
+	if err := stream.Close(); err != nil {
+		log.Fatal(fmt.Printf("Close fail: error: %v\n", err))
 	}
 }
 
